@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+from pathlib import Path
+from datetime import timedelta
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+SECRET_KEY = 'dev-secret-key'
+DEBUG = True
+ALLOWED_HOSTS = []
+
+=======
 """
 Django settings for core project.
 
@@ -30,6 +40,7 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+>>>>>>> main
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,6 +48,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
+    'rest_framework',
+    'users',
+    'tasks',
+    'web',
+=======
+>>>>>>> main
 ]
 
 MIDDLEWARE = [
@@ -54,7 +72,11 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+<<<<<<< HEAD
+        'DIRS': [BASE_DIR / "templates"],
+=======
         'DIRS': [],
+>>>>>>> main
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -68,10 +90,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+<<<<<<< HEAD
+=======
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+>>>>>>> main
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -79,6 +104,29 @@ DATABASES = {
     }
 }
 
+<<<<<<< HEAD
+AUTH_PASSWORD_VALIDATORS = []
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+STATIC_URL = 'static/'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+=======
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -115,3 +163,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+>>>>>>> main
