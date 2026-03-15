@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
@@ -14,3 +15,8 @@ class RegisterView(generics.CreateAPIView):
             return Response({"error": "username already exists"}, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.create_user(username=username, password=password)
         return Response({"message": "user created", "id": user.id}, status=status.HTTP_201_CREATED)
+=======
+from django.shortcuts import render
+
+# Create your views here.
+>>>>>>> main
