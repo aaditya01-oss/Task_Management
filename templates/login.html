@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Register</h2>
+  <input id="r_username" placeholder="username">
+  <input id="r_password" type="password" placeholder="password">
+  <button onclick="registerUser()">Register</button>
+
+  <h2>Login</h2>
+  <input id="l_username" placeholder="username">
+  <input id="l_password" type="password" placeholder="password">
+  <button onclick="login()">Login</button>
+
+  <p id="msg"></p>
+
+  <script>
+    async function registerUser() {
+      const username = document.getElementById('r_username').value;
+      const password = document.getElementById('r_password').value;
+      const res = await fetch('/api/auth/register/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+      document.getElementById('msg').innerText = await res.text();
+    }
+
+    async function login() {
+      const username = document.getElementById('l_username').value;
+      const password = document.getElementById('l_password').value;
+      const res = await fetch('/api/auth/login/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      });
+      const data = await res.json();
+      if (data.access) {
+        localStorage.setItem('access', data.access);
+        window.location.href = '/tasks-ui/';
+      } else {
+        document.getElementById('msg').innerText = JSON.stringify(data);
+      }
+    }
+  </script>
+</body>
+</html>
