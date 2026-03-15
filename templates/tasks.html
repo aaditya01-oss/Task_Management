@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Task Dashboard</h2>
+  <input id="title" placeholder="Title">
+  <input id="description" placeholder="Description">
+  <select id="status">
+    <option value="todo">todo</option>
+    <option value="doing">doing</option>
+    <option value="done">done</option>
+  </select>
+  <button onclick="createTask()">Add Task</button>
+  <button onclick="logout()">Logout</button>
+
+  <ul id="taskList"></ul>
+
+  <script>
+    const token = localStorage.getItem('access');
+    if (!token) window.location.href = '/';
+
+    async function fetchTasks() {
+      const res = await fetch('/api/tasks/', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      const list = document.getElementById('taskList');
+      list.innerHTML = '';
+      data.forEach(task => {
+        const li = document.createElement('li');
+        li.innerHTML = `${task.title} - ${task.status}
+          <button onclick="deleteTask(${task.id})">Delete</button>`;
+        list.appendChild(li);
+      });
+    }
+
+    async function createTask() {
+      const title = document.getElementById('title').value;
+      const description = document.getElementById('description').value;
+      const status = document.getElementById('status').value;
+      await fetch('/api/tasks/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({title, description, status})
+      });
+      fetchTasks();
+    }
+
+    async function deleteTask(id) {
+      await fetch(`/api/tasks/${id}/`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      fetchTasks();
+    }
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/';
+    }
+
+    fetchTasks();
+  </script>
+</body>
+</html>
