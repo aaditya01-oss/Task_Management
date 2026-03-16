@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background: linear-gradient(120deg,#f6f8ff,#eef2ff); min-height: 100vh; }
+    .app-card { border: 0; border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+    .task-item { border: 1px solid #eceef3; border-radius: 12px; padding: 12px; background: #fff; }
+    .priority-todo { background:#e7f1ff; color:#0d6efd; }
+    .priority-doing { background:#fff3cd; color:#b7791f; }
+    .priority-done { background:#d1e7dd; color:#146c43; }
+  </style>
+</head>
+<body>
+  <div class="container py-5">
+    <div class="card app-card">
+      <div class="card-body p-4 p-md-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="fw-bold mb-0">📋 Task Dashboard</h2>
+          <button id="logoutBtn" class="btn btn-outline-danger btn-sm">Logout</button>
+        </div>
+
+        <form id="taskForm" class="row g-2 mb-4">
+          <div class="col-12 col-md-4">
+            <input type="text" name="title" class="form-control" placeholder="Task title" required>
+          </div>
+          <div class="col-12 col-md-4">
+            <input type="text" name="description" class="form-control" placeholder="Description">
+          </div>
+          <div class="col-12 col-md-2">
+            <select name="status" class="form-select">
+              <option value="todo">Todo</option>
+              <option value="doing">Doing</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+          <div class="col-12 col-md-2 d-grid">
+            <button type="submit" class="btn btn-primary">+ Add Task</button>
+          </div>
+        </form>
+
+        <div id="taskList" class="row g-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const access = localStorage.getItem("access");
+    if (!access) window.location.href = "/";
+
+    const taskList = document.getElementById("taskList");
+    const taskForm = document.getElementById("taskForm");
+
+    function badge(status) {
+      if (status === "todo") return `<span class="badge priority-todo">Todo</span>`;
+      if (status === "doing") return `<span class="badge priority-doing">Doing</span>`;
+      return `<span class="badge priority-done">Done</span>`;
+    }
+
+    async function loadTasks() {
+      const res = await fetch("/api/tasks/", {
+        headers: { Authorization: `Bearer ${access}` }
+      });
+
+      if (res.status === 401) {
+        localStorage.removeItem("access");
+        window.location.href = "/";
+        return;
+      }
+
+      const tasks = await res.json();
+      if (!Array.isArray(tasks) || tasks.length === 0) {
+        taskList.innerHTML = `
+          <div class="col-12">
+            <div class="alert alert-light border text-center mb-0">
+              No tasks yet. Add your first task 🚀
+            </div>
+          </div>`;
+        return;
+      }
+
+      taskList.innerHTML = tasks.map(task => `
+        <div class="col-12 col-md-6">
+          <div class="task-item">
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h6 class="mb-1">${task.title ?? ""}</h6>
+                <p class="text-muted small mb-2">${task.description ?? ""}</p>
+              </div>
+              ${badge(task.status)}
+            </div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    async function addTask(e) {
+      e.preventDefault();
+      const formData = new FormData(taskForm);
+      const payload = {
+        title: (formData.get("title") || "").trim(),
+        description: (formData.get("description") || "").trim(),
+        status: formData.get("status") || "todo"
+      };
+
+      const res = await fetch("/api/tasks/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        taskForm.reset();
+        await loadTasks();
+      } else {
+        console.log(await res.text());
+        alert("Failed to add task");
+      }
+    }
+
+    taskForm.addEventListener("submit", addTask);
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("access");
+      window.location.href = "/";
+    });
+
+    loadTasks();
+  </script>
+</body>
+</html>
