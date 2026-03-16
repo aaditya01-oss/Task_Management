@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task Manager Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(120deg, #f4f6fb, #eef3ff);
+      display: flex;
+      justify-content: center;
+      padding-top: 60px;
+      min-height: 100vh;
+    }
+    .card {
+      width: 380px;
+      background: #fff;
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.08);
+    }
+    h3 { margin-bottom: 6px; }
+    input, button {
+      width: 100%;
+      padding: 11px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid #d9deea;
+      box-sizing: border-box;
+    }
+    input:focus {
+      outline: none;
+      border-color: #1f6feb;
+      box-shadow: 0 0 0 3px rgba(31,111,235,.15);
+    }
+    button {
+      background: #1f6feb;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover { background: #1659bf; }
+
+    .msg {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: none;
+    }
+    .msg.success {
+      display: block;
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #c8e6c9;
+    }
+    .msg.error {
+      display: block;
+      background: #ffebee;
+      color: #b71c1c;
+      border: 1px solid #ffcdd2;
+    }
+    .section-gap { margin-top: 22px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h3>Register</h3>
+    <input id="r_username" placeholder="Username">
+    <input id="r_password" type="password" placeholder="Password">
+    <button onclick="registerUser()">Create Account</button>
+
+    <h3 class="section-gap">Login</h3>
+    <input id="l_username" placeholder="Username">
+    <input id="l_password" type="password" placeholder="Password">
+    <button onclick="loginUser()">Sign In</button>
+
+    <div id="msg" class="msg"></div>
+  </div>
+
+  <script>
+    if (localStorage.getItem("access")) {
+      window.location.href = "/tasks-ui/";
+    }
+
+    function showMessage(type, text) {
+      const msg = document.getElementById("msg");
+      msg.className = `msg ${type}`;
+      msg.textContent = text;
+    }
+
+    async function registerUser() {
+      const username = document.getElementById('r_username').value.trim();
+      const password = document.getElementById('r_password').value.trim();
+
+      if (!username || !password) {
+        showMessage("error", "Please enter username and password to register.");
+        return;
+      }
+
+      const res = await fetch('/api/auth/register/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+
+      let data = {};
+      try { data = await res.json(); } catch { data = {}; }
+
+      if (res.ok) {
+        showMessage("success", "Account created successfully. Please login to continue.");
+      } else {
+        const err =
+          data.detail ||
+          data.message ||
+          (data.username && data.username[0]) ||
+          (data.password && data.password[0]) ||
+          "Registration failed. Please try again.";
+        showMessage("error", err);
+      }
+    }
+
+    async function loginUser() {
+      const username = document.getElementById('l_username').value.trim();
+      const password = document.getElementById('l_password').value.trim();
+
+      if (!username || !password) {
+        showMessage("error", "Please enter username and password to login.");
+        return;
+      }
+
+      const res = await fetch('/api/auth/login/', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+
+      let data = {};
+      try { data = await res.json(); } catch { data = {}; }
+
+      if (res.ok && data.access) {
+        localStorage.setItem('access', data.access);
+        showMessage("success", "Login successful. Redirecting to dashboard...");
+        setTimeout(() => {
+          window.location.href = '/tasks-ui/';
+        }, 600);
+      } else {
+        showMessage("error", data.detail || "Invalid credentials. Please try again.");
+      }
+    }
+  </script>
+</body>
+</html>
