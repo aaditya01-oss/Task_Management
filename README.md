@@ -173,12 +173,11 @@ Application runs at: `http://127.0.0.1:8000/`
 
 ## 11. Team Contributions
 
-| Contributor | Role | Key Contributions |
-|------------|------|-------------------|
-| @aaditya01-oss | Project Lead / Developer | Architecture, reviews, merge management,improvement and testing |
-| @ravi-ally-lab | Developer/Contributor | UI/docs a11y updates, cleanup, PR contributions |
-| @mishrabishal2003-ship-it | Contributor | Documentation notes and merge activity |
-
+| Contributor | Name | CRN | Role | Key Contributions |
+|-------------|------|-----|------|-------------------|
+| @aaditya01-oss | Aaditya Ghimire | CRN_1 | Project Lead / Developer | Architecture, reviews, merge management,testing |
+| @ravi-ally-lab | Ravi Shiwakoti | CRN_35 | Developer/Contributor | UI/docs a11y updates, cleanup, PR contributions |
+| @mishrabishal2003-ship-it | Bishal Dubey | CRN_7 | Contributor | Documentation notes and merge activity |
 
 
 ---
