@@ -11,8 +11,10 @@ class TaskViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.decorators.http import require_POST
 from .forms import TaskForm 
 
 
@@ -34,3 +36,10 @@ def task_create(request):
         form = TaskForm()
 
     return render(request, "tasks/tasks_form.html", {"form": form})
+
+@login_required
+@require_POST
+def task_delete(request, pk):
+    task = get_object_or_404(Task, pk=pk, owner=request.user)
+    task.delete()
+    return redirect("task-dashboard")
