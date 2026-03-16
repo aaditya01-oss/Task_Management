@@ -1,19 +1,37 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Task Manager Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#f4f6fb; display:flex; justify-content:center; padding-top:60px; }
+    .card { width: 360px; background:#fff; border-radius:12px; padding:20px; box-shadow:0 8px 24px rgba(0,0,0,.08); }
+    input, button { width:100%; padding:10px; margin-top:10px; }
+    button { background:#1f6feb; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+    .msg { margin-top:12px; color:#c62828; }
+  </style>
+</head>
 <body>
-  <h2>Register</h2>
-  <input id="r_username" placeholder="username">
-  <input id="r_password" type="password" placeholder="password">
-  <button onclick="registerUser()">Register</button>
+  <div class="card">
+    <h3>Register</h3>
+    <input id="r_username" placeholder="username">
+    <input id="r_password" type="password" placeholder="password">
+    <button onclick="registerUser()">Register</button>
 
-  <h2>Login</h2>
-  <input id="l_username" placeholder="username">
-  <input id="l_password" type="password" placeholder="password">
-  <button onclick="login()">Login</button>
+    <h3 style="margin-top:20px;">Login</h3>
+    <input id="l_username" placeholder="username">
+    <input id="l_password" type="password" placeholder="password">
+    <button onclick="loginUser()">Login</button>
 
-  <p id="msg"></p>
+    <p id="msg" class="msg"></p>
+  </div>
 
   <script>
+    if (localStorage.getItem("access")) {
+      window.location.href = "/tasks-ui/";
+    }
+
     async function registerUser() {
       const username = document.getElementById('r_username').value;
       const password = document.getElementById('r_password').value;
@@ -25,7 +43,7 @@
       document.getElementById('msg').innerText = await res.text();
     }
 
-    async function login() {
+    async function loginUser() {
       const username = document.getElementById('l_username').value;
       const password = document.getElementById('l_password').value;
       const res = await fetch('/api/auth/login/', {
@@ -33,12 +51,13 @@
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({username, password})
       });
+
       const data = await res.json();
       if (data.access) {
         localStorage.setItem('access', data.access);
         window.location.href = '/tasks-ui/';
       } else {
-        document.getElementById('msg').innerText = JSON.stringify(data);
+        document.getElementById('msg').innerText = data.detail || JSON.stringify(data);
       }
     }
   </script>
