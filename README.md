@@ -175,8 +175,8 @@ Application runs at: `http://127.0.0.1:8000/`
 
 | Contributor | Role | Key Contributions |
 |------------|------|-------------------|
-| @aaditya01-oss | Project Lead / Reviewer | Architecture, reviews, merge management |
-| @raviswiss11 | Developer | UI/docs a11y updates, cleanup, PR contributions |
+| @aaditya01-oss | Project Lead / Developer | Architecture, reviews, merge management,improvement and testing |
+| @ravi-ally-lab | Developer/Contributor | UI/docs a11y updates, cleanup, PR contributions |
 | @mishrabishal2003-ship-it | Contributor | Documentation notes and merge activity |
 
 
